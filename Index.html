@@ -4,6 +4,7 @@
     <title>Performance Dashboard</title>
     <meta http-equiv="refresh" content="1800"> <!-- Refresh every 30 minutes -->
     <style>
+        /* Ensure the page takes up the full screen */
         html, body {
             margin: 0;
             padding: 0;
@@ -14,6 +15,7 @@
             height: 100vh;
         }
 
+        /* Left Panel (Date, Time, Weather, Ticker) */
         .left-panel {
             width: 100px;
             height: 100vh;
@@ -28,35 +30,38 @@
             box-sizing: border-box;
         }
 
+        /* Date Display */
         .date-box {
-            font-size: 10px;
+            font-size: 10px; /*20*/
             font-weight: bold;
             text-align: center;
         }
 
+        /* Time Display */
         .time-box {
-            font-size: 14px;
+            font-size: 14px;/*40*/
             font-weight: bold;
             text-align: center;
         }
 
+        /* Weather Display */
         .weather-box {
             text-align: center;
-            font-size: 12px;
+            font-size: 12px;/*22*/
         }
-
         .weather-icon {
             width: 80px;
             height: 80px;
         }
-
         .city-name {
-            font-size: 12px;
+            font-size: 12px;/*18*/
             font-weight: bold;
         }
-
-        .ticker-container {
+        
+         /* Ticker (Scrolling text) */
+         .ticker-container {
             overflow: hidden;
+            /* height: 150px; */
             height: 350px;
             width: 100%;
             position: relative;
@@ -65,6 +70,7 @@
         .ticker-text {
             position: absolute;
             width: 100%;
+            bottom: 1520; /*Start from the bottom */
             animation: scrollUp 10s linear infinite;
         }
 
@@ -73,6 +79,7 @@
             to { transform: translateY(-100%); }
         }
 
+        /* Google Slides iframe container */
         .iframe-container {
             flex-grow: 1;
             height: 100vh;
@@ -92,15 +99,29 @@
     </style>
 
     <script>
+        // Function to update time and date
         function updateTime() {
             const timeBox = document.getElementById("timeBox");
             const dateBox = document.getElementById("dateBox");
+
             const now = new Date();
+
+            // Format date as "Saturday, March 29, 2025"
             const options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
             dateBox.innerHTML = now.toLocaleDateString('en-US', options);
+
+            // Update time
             timeBox.innerHTML = now.toLocaleTimeString();
         }
 
+        // Function to update Google Slides iframe
+        function updateIframe() {
+            var iframe = document.getElementById("slidesFrame");
+            var url = "https://docs.google.com/presentation/d/e/2PACX-1vRT65UebP7HTr_Fd7gKpB84KVzUGvcsw2e_1fiut-R0xRQ8NbRhH0PqlFc9Lj28ybGrW5eZmUldmo6Z/embed?start=true&loop=true&delayms=15000";
+            iframe.src = url + "&t=" + new Date().getTime(); // Force refresh
+        }
+
+        // Function to fetch weather data
         function fetchWeather() {
             const apiKey = "85158e35e52890edf18936f969fded80"; 
             const city = "Katunayaka";
@@ -129,25 +150,38 @@
                 });
         }
 
+        // Ensure all scripts run after DOM is loaded
         document.addEventListener("DOMContentLoaded", () => {
             updateTime();
-            setInterval(updateTime, 1000);
+            setInterval(updateTime, 1000); // Update time every second
+
+            updateIframe();
+            setInterval(updateIframe, 900000); // Refresh iframe every 35 (35000) sec
+
             fetchWeather();
-            setInterval(fetchWeather, 600000);
+            setInterval(fetchWeather, 600000); // Update weather every 10 min
         });
+
     </script>
 </head>
 <body>
     <!-- Left Panel: Date, Time, Weather & Ticker -->
     <div class="left-panel">
+        <!-- Date Display -->
         <div id="dateBox" class="date-box"></div>
+
+        <!-- Time Display -->
         <div id="timeBox" class="time-box"></div>
+
+        <!-- Weather Section -->
         <div class="weather-box">
-            <div id="cityName" class="city-name">Loading...</div>
+            <div id="cityName" class="city-name">Loading...</div> <!-- City Name -->
             <img id="weatherIcon" class="weather-icon" src="" alt="Weather Icon">
             <div id="weatherTemp">--°C</div>
             <div id="weatherDesc">Loading...</div>
         </div>
+
+        <!-- Scrolling Text Ticker -->
         <div class="ticker-container">
             <div class="ticker-text">
                 Important Notice: System maintenance at 10 PM. Please save your work. 🚀
@@ -155,13 +189,9 @@
         </div>
     </div>
 
-    <!-- Right Panel: Looker Studio Dashboard Embed -->
+    <!-- Right Panel: Google Slides -->
     <div class="iframe-container">
-        <iframe 
-            src="https://lookerstudio.google.com/embed/reporting/c03a68d6-0a09-4a5a-96a4-462308d8aa20/page/p_jhaldr8ird" 
-            frameborder="0" 
-            allowfullscreen>
-        </iframe>
+        <iframe id="slidesFrame" src="" allowfullscreen="true"></iframe>
     </div>
 </body>
 </html>
