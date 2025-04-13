@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Performance Dashboard</title>
-    <meta http-equiv="refresh" content="1800"> <!-- Refresh every 30 minutes -->
+    <meta http-equiv="refresh" content="1800">
     <style>
         html, body {
             margin: 0;
@@ -78,26 +78,29 @@
             flex-grow: 1;
             height: 100vh;
             position: relative;
-            background: #F5F7FB;
         }
 
-        .dashboard-frame {
-            position: absolute;
-            top: 0;
-            left: 0;
+        iframe {
             width: 100%;
             height: 100%;
             border: none;
-            display: none;
-        }
-
-        .dashboard-frame.active {
-            display: block;
         }
     </style>
 
     <script>
-        // Time & Date
+        const urls = [
+            "https://lookerstudio.google.com/embed/reporting/c03a68d6-0a09-4a5a-96a4-462308d8aa20/page/p_jhaldr8ird?embedded=true",
+            "https://lookerstudio.google.com/embed/reporting/c03a68d6-0a09-4a5a-96a4-462308d8aa20/page/BGGGF?embedded=true",
+            "https://lookerstudio.google.com/embed/reporting/c03a68d6-0a09-4a5a-96a4-462308d8aa20/page/p_y5rjvcqdrd?embedded=true"
+        ];
+        let current = 0;
+
+        function rotatePages() {
+            const frame = document.getElementById("slidesFrame");
+            current = (current + 1) % urls.length;
+            frame.src = urls[current];
+        }
+
         function updateTime() {
             const now = new Date();
             document.getElementById("timeBox").innerText = now.toLocaleTimeString();
@@ -106,7 +109,6 @@
             });
         }
 
-        // Weather
         function fetchWeather() {
             const apiKey = "85158e35e52890edf18936f969fded80";
             const city = "Katunayaka";
@@ -129,26 +131,17 @@
                 });
         }
 
-        // Rotate Dashboards
-        let currentFrame = 0;
-        function switchDashboard() {
-            for (let i = 0; i < 3; i++) {
-                const frame = document.getElementById(`frame${i}`);
-                frame.classList.remove('active');
-            }
-            document.getElementById(`frame${currentFrame}`).classList.add('active');
-            currentFrame = (currentFrame + 1) % 3;
-        }
-
         document.addEventListener("DOMContentLoaded", () => {
             updateTime();
             setInterval(updateTime, 1000);
             fetchWeather();
-            setInterval(fetchWeather, 600000); // every 10 mins
+            setInterval(fetchWeather, 600000);
 
-            // Rotate dashboards every 10 seconds
-            switchDashboard(); // Show first immediately
-            setInterval(switchDashboard, 10000);
+            // Start with the first page
+            document.getElementById("slidesFrame").src = urls[0];
+
+            // Switch every 10s
+            setInterval(rotatePages, 10000);
         });
     </script>
 </head>
@@ -172,9 +165,7 @@
 
     <!-- Right Panel -->
     <div class="iframe-container">
-        <iframe class="dashboard-frame" id="frame0" src="https://lookerstudio.google.com/embed/reporting/c03a68d6-0a09-4a5a-96a4-462308d8aa20/page/p_jhaldr8ird?embedded=true"></iframe>
-        <iframe class="dashboard-frame" id="frame1" src="https://lookerstudio.google.com/embed/reporting/c03a68d6-0a09-4a5a-96a4-462308d8aa20/page/BGGGF?embedded=true"></iframe>
-        <iframe class="dashboard-frame" id="frame2" src="https://lookerstudio.google.com/embed/reporting/c03a68d6-0a09-4a5a-96a4-462308d8aa20/page/p_y5rjvcqdrd?embedded=true"></iframe>
+        <iframe id="slidesFrame" src="" allowfullscreen></iframe>
     </div>
 </body>
 </html>
