@@ -16,9 +16,8 @@
 
         .left-panel {
             width: 100px;
-            height: 100vh;
             background: #F5F7FB;
-            color: #000000;
+            color: #000;
             font-family: Arial, sans-serif;
             display: flex;
             flex-direction: column;
@@ -28,32 +27,12 @@
             box-sizing: border-box;
         }
 
-        .date-box {
-            font-size: 10px;
-            font-weight: bold;
-            text-align: center;
-        }
+        .date-box { font-size: 10px; font-weight: bold; text-align: center; }
+        .time-box { font-size: 14px; font-weight: bold; text-align: center; }
 
-        .time-box {
-            font-size: 14px;
-            font-weight: bold;
-            text-align: center;
-        }
-
-        .weather-box {
-            text-align: center;
-            font-size: 12px;
-        }
-
-        .weather-icon {
-            width: 80px;
-            height: 80px;
-        }
-
-        .city-name {
-            font-size: 12px;
-            font-weight: bold;
-        }
+        .weather-box { text-align: center; font-size: 12px; }
+        .weather-icon { width: 80px; height: 80px; }
+        .city-name { font-size: 12px; font-weight: bold; }
 
         .ticker-container {
             overflow: hidden;
@@ -65,6 +44,7 @@
         .ticker-text {
             position: absolute;
             width: 100%;
+            bottom: 0;
             animation: scrollUp 10s linear infinite;
         }
 
@@ -92,20 +72,28 @@
     </style>
 
     <script>
+        const reportBaseUrl = "https://lookerstudio.google.com/embed/reporting/c03a68d6-0a09-4a5a-96a4-462308d8aa20/page/";
+        const pageIds = [
+            "p_jhaldr8ird", // Page 1
+            "p_example123", // Page 2
+            "p_example456"  // Add more as needed
+        ];
+        let currentPage = 0;
+
         function updateTime() {
             const timeBox = document.getElementById("timeBox");
             const dateBox = document.getElementById("dateBox");
             const now = new Date();
+
             const options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
             dateBox.innerHTML = now.toLocaleDateString('en-US', options);
             timeBox.innerHTML = now.toLocaleTimeString();
         }
 
-        function fetchWeather() {
-            const apiKey = "85158e35e52890edf18936f969fded80"; 
+        function updateWeather() {
+            const apiKey = "85158e35e52890edf18936f969fded80";
             const city = "Katunayaka";
-            const units = "metric"; 
-            const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=${units}&appid=${apiKey}`;
+            const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`;
 
             fetch(url)
                 .then(response => response.json())
@@ -121,33 +109,41 @@
                         document.getElementById("weatherDesc").innerText = "Weather unavailable";
                     }
                 })
-                .catch(error => {
-                    console.error("Error fetching weather:", error);
+                .catch(() => {
                     document.getElementById("cityName").innerText = "City Unavailable";
                     document.getElementById("weatherTemp").innerText = "N/A";
                     document.getElementById("weatherDesc").innerText = "Weather unavailable";
                 });
         }
 
+        function switchPage() {
+            const iframe = document.getElementById("reportFrame");
+            iframe.src = reportBaseUrl + pageIds[currentPage] + "?embed=true";
+            currentPage = (currentPage + 1) % pageIds.length;
+        }
+
         document.addEventListener("DOMContentLoaded", () => {
             updateTime();
             setInterval(updateTime, 1000);
-            fetchWeather();
-            setInterval(fetchWeather, 600000);
+            updateWeather();
+            setInterval(updateWeather, 600000);
+            switchPage();
+            setInterval(switchPage, 10000); // Switch every 10s
         });
     </script>
 </head>
 <body>
-    <!-- Left Panel: Date, Time, Weather & Ticker -->
     <div class="left-panel">
         <div id="dateBox" class="date-box"></div>
         <div id="timeBox" class="time-box"></div>
+
         <div class="weather-box">
             <div id="cityName" class="city-name">Loading...</div>
             <img id="weatherIcon" class="weather-icon" src="" alt="Weather Icon">
             <div id="weatherTemp">--°C</div>
             <div id="weatherDesc">Loading...</div>
         </div>
+
         <div class="ticker-container">
             <div class="ticker-text">
                 Important Notice: System maintenance at 10 PM. Please save your work. 🚀
@@ -155,13 +151,8 @@
         </div>
     </div>
 
-    <!-- Right Panel: Looker Studio Dashboard Embed -->
     <div class="iframe-container">
-        <iframe 
-            src="https://lookerstudio.google.com/embed/reporting/c03a68d6-0a09-4a5a-96a4-462308d8aa20/page/p_jhaldr8ird" 
-            frameborder="0" 
-            allowfullscreen>
-        </iframe>
+        <iframe id="reportFrame" src="" allowfullscreen="true"></iframe>
     </div>
 </body>
 </html>
