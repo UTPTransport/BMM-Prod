@@ -93,30 +93,36 @@
     </style>
 
     <script>
-        const pageURLs = [
-            "p_jhaldr8ird", "BGGGF", "p_y5rjvcqdrd", "p_le1e2jakrd", "p_isyaxnjnrd",
-            "p_xrzzgkuprd", "p_17lkqgqqrd", "p_s578cjqqrd", "p_vyx726tprd", "p_5pf5vd8krd",
-            "p_2ioud4vprd", "p_fwcxl2jmrd", "p_ohe31rrprd"
+        const reportPages = [
+            "https://lookerstudio.google.com/embed/reporting/a567d9d3-a904-43f4-a783-2a6f2fcc4933/page/p_jhaldr8ird",
+            "https://lookerstudio.google.com/embed/reporting/a567d9d3-a904-43f4-a783-2a6f2fcc4933/page/BGGGF",
+            "https://lookerstudio.google.com/embed/reporting/a567d9d3-a904-43f4-a783-2a6f2fcc4933/page/p_y5rjvcqdrd",
+            "https://lookerstudio.google.com/embed/reporting/a567d9d3-a904-43f4-a783-2a6f2fcc4933/page/p_le1e2jakrd",
+            "https://lookerstudio.google.com/embed/reporting/a567d9d3-a904-43f4-a783-2a6f2fcc4933/page/p_isyaxnjnrd",
+            "https://lookerstudio.google.com/embed/reporting/a567d9d3-a904-43f4-a783-2a6f2fcc4933/page/p_xrzzgkuprd",
+            "https://lookerstudio.google.com/embed/reporting/a567d9d3-a904-43f4-a783-2a6f2fcc4933/page/p_17lkqgqqrd",
+            "https://lookerstudio.google.com/embed/reporting/a567d9d3-a904-43f4-a783-2a6f2fcc4933/page/p_s578cjqqrd",
+            "https://lookerstudio.google.com/embed/reporting/a567d9d3-a904-43f4-a783-2a6f2fcc4933/page/p_vyx726tprd",
+            "https://lookerstudio.google.com/embed/reporting/a567d9d3-a904-43f4-a783-2a6f2fcc4933/page/p_5pf5vd8krd",
+            "https://lookerstudio.google.com/embed/reporting/a567d9d3-a904-43f4-a783-2a6f2fcc4933/page/p_2ioud4vprd",
+            "https://lookerstudio.google.com/embed/reporting/a567d9d3-a904-43f4-a783-2a6f2fcc4933/page/p_fwcxl2jmrd",
+            "https://lookerstudio.google.com/embed/reporting/a567d9d3-a904-43f4-a783-2a6f2fcc4933/page/p_ohe31rrprd"
         ];
 
-        const baseURL = "https://lookerstudio.google.com/embed/reporting/a567d9d3-a904-43f4-a783-2a6f2fcc4933/page/";
-        let currentIndex = 0;
-        const intervalSeconds = 1;
+        let currentPage = 0;
 
         function updateTime() {
-            const timeBox = document.getElementById("timeBox");
-            const dateBox = document.getElementById("dateBox");
             const now = new Date();
-            const options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
-            dateBox.innerHTML = now.toLocaleDateString('en-US', options);
-            timeBox.innerHTML = now.toLocaleTimeString();
+            document.getElementById("dateBox").innerText = now.toLocaleDateString('en-US', {
+                weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
+            });
+            document.getElementById("timeBox").innerText = now.toLocaleTimeString();
         }
 
-        function rotateIframe() {
+        function updateIframe() {
             const iframe = document.getElementById("slidesFrame");
-            const page = pageURLs[currentIndex];
-            iframe.src = `${baseURL}${page}?t=${Date.now()}`; // Add timestamp to force refresh
-            currentIndex = (currentIndex + 1) % pageURLs.length;
+            iframe.src = reportPages[currentPage] + "&t=" + new Date().getTime(); // Add timestamp to force reload
+            currentPage = (currentPage + 1) % reportPages.length;
         }
 
         function fetchWeather() {
@@ -140,7 +146,7 @@
                     }
                 })
                 .catch(error => {
-                    console.error("Error fetching weather:", error);
+                    console.error("Weather error:", error);
                     document.getElementById("cityName").innerText = "City Unavailable";
                     document.getElementById("weatherTemp").innerText = "N/A";
                     document.getElementById("weatherDesc").innerText = "Weather unavailable";
@@ -150,10 +156,8 @@
         document.addEventListener("DOMContentLoaded", () => {
             updateTime();
             setInterval(updateTime, 1000);
-
-            rotateIframe();
-            setInterval(rotateIframe, intervalSeconds * 1000);
-
+            updateIframe();
+            setInterval(updateIframe, 10000); // Change iframe every 10 seconds
             fetchWeather();
             setInterval(fetchWeather, 600000); // Update weather every 10 mins
         });
