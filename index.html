@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Performance Dashboard</title>
-    <meta http-equiv="refresh" content="1800">
+    <meta http-equiv="refresh" content="1800"> <!-- Refresh every 30 minutes -->
     <style>
         html, body {
             margin: 0;
@@ -12,7 +12,6 @@
             display: flex;
             width: 100vw;
             height: 100vh;
-            font-family: Arial, sans-serif;
         }
 
         .left-panel {
@@ -20,6 +19,7 @@
             height: 100vh;
             background: #F5F7FB;
             color: #000000;
+            font-family: Arial, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -78,35 +78,34 @@
             flex-grow: 1;
             height: 100vh;
             position: relative;
+            background: #F5F7FB;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         iframe {
             width: 100%;
             height: 100%;
             border: none;
+            background: transparent;
         }
     </style>
 
     <script>
-        const urls = [
-            "https://lookerstudio.google.com/embed/reporting/c03a68d6-0a09-4a5a-96a4-462308d8aa20/page/p_jhaldr8ird?embedded=true",
-            "https://lookerstudio.google.com/embed/reporting/c03a68d6-0a09-4a5a-96a4-462308d8aa20/page/BGGGF?embedded=true",
-            "https://lookerstudio.google.com/embed/reporting/c03a68d6-0a09-4a5a-96a4-462308d8aa20/page/p_y5rjvcqdrd?embedded=true"
-        ];
-        let current = 0;
-
-        function rotatePages() {
-            const frame = document.getElementById("slidesFrame");
-            current = (current + 1) % urls.length;
-            frame.src = urls[current];
+        function updateTime() {
+            const timeBox = document.getElementById("timeBox");
+            const dateBox = document.getElementById("dateBox");
+            const now = new Date();
+            const options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
+            dateBox.innerHTML = now.toLocaleDateString('en-US', options);
+            timeBox.innerHTML = now.toLocaleTimeString();
         }
 
-        function updateTime() {
-            const now = new Date();
-            document.getElementById("timeBox").innerText = now.toLocaleTimeString();
-            document.getElementById("dateBox").innerText = now.toLocaleDateString('en-US', {
-                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-            });
+        function updateIframe() {
+            var iframe = document.getElementById("slidesFrame");
+            var url = "https://lookerstudio.google.com/embed/reporting/a567d9d3-a904-43f4-a783-2a6f2fcc4933/page/p_5pf5vd8krd";
+            iframe.src = url + "&t=" + new Date().getTime();
         }
 
         function fetchWeather() {
@@ -116,15 +115,21 @@
             const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=${units}&appid=${apiKey}`;
 
             fetch(url)
-                .then(res => res.json())
+                .then(response => response.json())
                 .then(data => {
                     if (data.cod === 200) {
                         document.getElementById("cityName").innerText = `${data.name}, ${data.sys.country}`;
                         document.getElementById("weatherTemp").innerText = `${Math.round(data.main.temp)}°C`;
                         document.getElementById("weatherDesc").innerText = data.weather[0].description;
                         document.getElementById("weatherIcon").src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
+                    } else {
+                        document.getElementById("cityName").innerText = "City Unavailable";
+                        document.getElementById("weatherTemp").innerText = "N/A";
+                        document.getElementById("weatherDesc").innerText = "Weather unavailable";
                     }
-                }).catch(() => {
+                })
+                .catch(error => {
+                    console.error("Error fetching weather:", error);
                     document.getElementById("cityName").innerText = "City Unavailable";
                     document.getElementById("weatherTemp").innerText = "N/A";
                     document.getElementById("weatherDesc").innerText = "Weather unavailable";
@@ -134,38 +139,32 @@
         document.addEventListener("DOMContentLoaded", () => {
             updateTime();
             setInterval(updateTime, 1000);
+            updateIframe();
+            setInterval(updateIframe, 900000); // Refresh iframe every 15 mins
             fetchWeather();
-            setInterval(fetchWeather, 600000);
-
-            // Start with the first page
-            document.getElementById("slidesFrame").src = urls[0];
-
-            // Switch every 10s
-            setInterval(rotatePages, 10000);
+            setInterval(fetchWeather, 600000); // Update weather every 10 mins
         });
     </script>
 </head>
 <body>
-    <!-- Left Panel -->
     <div class="left-panel">
         <div id="dateBox" class="date-box"></div>
         <div id="timeBox" class="time-box"></div>
-
         <div class="weather-box">
             <div id="cityName" class="city-name">Loading...</div>
             <img id="weatherIcon" class="weather-icon" src="" alt="Weather Icon">
             <div id="weatherTemp">--°C</div>
             <div id="weatherDesc">Loading...</div>
         </div>
-
         <div class="ticker-container">
-            <div class="ticker-text">Important Notice: System maintenance at 10 PM. Please save your work. 🚀</div>
+            <div class="ticker-text">
+                Important Notice: System maintenance at 10 PM. Please save your work. 🚀
+            </div>
         </div>
     </div>
 
-    <!-- Right Panel -->
     <div class="iframe-container">
-        <iframe id="slidesFrame" src="" allowfullscreen></iframe>
+        <iframe id="slidesFrame" src="" allowfullscreen="true"></iframe>
     </div>
 </body>
 </html>
