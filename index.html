@@ -93,36 +93,19 @@
     </style>
 
     <script>
-        const reportPages = [
-            "https://lookerstudio.google.com/embed/reporting/a567d9d3-a904-43f4-a783-2a6f2fcc4933/page/p_jhaldr8ird",
-            "https://lookerstudio.google.com/embed/reporting/a567d9d3-a904-43f4-a783-2a6f2fcc4933/page/BGGGF",
-            "https://lookerstudio.google.com/embed/reporting/a567d9d3-a904-43f4-a783-2a6f2fcc4933/page/p_y5rjvcqdrd",
-            "https://lookerstudio.google.com/embed/reporting/a567d9d3-a904-43f4-a783-2a6f2fcc4933/page/p_le1e2jakrd",
-            "https://lookerstudio.google.com/embed/reporting/a567d9d3-a904-43f4-a783-2a6f2fcc4933/page/p_isyaxnjnrd",
-            "https://lookerstudio.google.com/embed/reporting/a567d9d3-a904-43f4-a783-2a6f2fcc4933/page/p_xrzzgkuprd",
-            "https://lookerstudio.google.com/embed/reporting/a567d9d3-a904-43f4-a783-2a6f2fcc4933/page/p_17lkqgqqrd",
-            "https://lookerstudio.google.com/embed/reporting/a567d9d3-a904-43f4-a783-2a6f2fcc4933/page/p_s578cjqqrd",
-            "https://lookerstudio.google.com/embed/reporting/a567d9d3-a904-43f4-a783-2a6f2fcc4933/page/p_vyx726tprd",
-            "https://lookerstudio.google.com/embed/reporting/a567d9d3-a904-43f4-a783-2a6f2fcc4933/page/p_5pf5vd8krd",
-            "https://lookerstudio.google.com/embed/reporting/a567d9d3-a904-43f4-a783-2a6f2fcc4933/page/p_2ioud4vprd",
-            "https://lookerstudio.google.com/embed/reporting/a567d9d3-a904-43f4-a783-2a6f2fcc4933/page/p_fwcxl2jmrd",
-            "https://lookerstudio.google.com/embed/reporting/a567d9d3-a904-43f4-a783-2a6f2fcc4933/page/p_ohe31rrprd"
-        ];
-
-        let currentPage = 0;
-
         function updateTime() {
+            const timeBox = document.getElementById("timeBox");
+            const dateBox = document.getElementById("dateBox");
             const now = new Date();
-            document.getElementById("dateBox").innerText = now.toLocaleDateString('en-US', {
-                weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
-            });
-            document.getElementById("timeBox").innerText = now.toLocaleTimeString();
+            const options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
+            dateBox.innerHTML = now.toLocaleDateString('en-US', options);
+            timeBox.innerHTML = now.toLocaleTimeString();
         }
 
         function updateIframe() {
-            const iframe = document.getElementById("slidesFrame");
-            iframe.src = reportPages[currentPage] + "&t=" + new Date().getTime(); // Add timestamp to force reload
-            currentPage = (currentPage + 1) % reportPages.length;
+            var iframe = document.getElementById("slidesFrame");
+            var url = "https://lookerstudio.google.com/embed/reporting/a567d9d3-a904-43f4-a783-2a6f2fcc4933/page/p_5pf5vd8krd";
+            iframe.src = url + "&t=" + new Date().getTime();
         }
 
         function fetchWeather() {
@@ -146,7 +129,7 @@
                     }
                 })
                 .catch(error => {
-                    console.error("Weather error:", error);
+                    console.error("Error fetching weather:", error);
                     document.getElementById("cityName").innerText = "City Unavailable";
                     document.getElementById("weatherTemp").innerText = "N/A";
                     document.getElementById("weatherDesc").innerText = "Weather unavailable";
@@ -157,7 +140,7 @@
             updateTime();
             setInterval(updateTime, 1000);
             updateIframe();
-            setInterval(updateIframe, 10000); // Change iframe every 10 seconds
+            setInterval(updateIframe, 900000); // Refresh iframe every 15 mins
             fetchWeather();
             setInterval(fetchWeather, 600000); // Update weather every 10 mins
         });
