@@ -13,13 +13,76 @@
             width: 100vw;
             height: 100vh;
         }
-        .iframe-container {
-            width: 100%;
+
+        .left-panel {
+            width: 100px;
             height: 100vh;
+            background: #F5F7FB;
+            color: #000000;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .date-box {
+            font-size: 10px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .time-box {
+            font-size: 14px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .weather-box {
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .weather-icon {
+            width: 80px;
+            height: 80px;
+        }
+
+        .city-name {
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .ticker-container {
+            overflow: hidden;
+            height: 350px;
+            width: 100%;
+            position: relative;
+        }
+
+        .ticker-text {
+            position: absolute;
+            width: 100%;
+            animation: scrollUp 10s linear infinite;
+        }
+
+        @keyframes scrollUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(-100%); }
+        }
+
+        .iframe-container {
+            flex-grow: 1;
+            height: 100vh;
+            position: relative;
+            background: #F5F7FB;
             display: flex;
             align-items: center;
             justify-content: center;
         }
+
         iframe {
             width: 100%;
             height: 100%;
@@ -29,18 +92,39 @@
     </style>
 </head>
 <body>
+    <!-- Left Panel -->
+    <div class="left-panel">
+        <div id="dateBox" class="date-box"></div>
+        <div id="timeBox" class="time-box"></div>
+
+        <!-- Weather -->
+        <div class="weather-box">
+            <div id="cityName" class="city-name">Loading...</div>
+            <img id="weatherIcon" class="weather-icon" src="" alt="Weather Icon">
+            <div id="weatherTemp">--°C</div>
+            <div id="weatherDesc">Loading...</div>
+        </div>
+
+        <!-- Scrolling Ticker -->
+        <div class="ticker-container">
+            <div class="ticker-text">
+                Important Notice: System maintenance at 10 PM. Please save your work. 🚀
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Panel with Iframe -->
     <div class="iframe-container">
         <iframe id="lookerFrame" src="" allowfullscreen></iframe>
     </div>
 
     <script>
-        const baseURL = "https://lookerstudio.google.com/embed/reporting/a567d9d3-a904-43f4-a783-2a6f2fcc4933";
         const pageIDs = [
             "page/p_5pf5vd8krd",
-            "page/p_r8keu3w7oc", // Example page IDs - replace with yours
+            "page/p_r8keu3w7oc",
             "page/p_d2a1mrlv6e"
         ];
-
+        const baseURL = "https://lookerstudio.google.com/embed/reporting/a567d9d3-a904-43f4-a783-2a6f2fcc4933";
         let currentPage = 0;
 
         function rotateSlides() {
@@ -51,9 +135,48 @@
             currentPage = (currentPage + 1) % pageIDs.length;
         }
 
+        function updateTime() {
+            const now = new Date();
+            const options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
+            document.getElementById("dateBox").innerHTML = now.toLocaleDateString('en-US', options);
+            document.getElementById("timeBox").innerHTML = now.toLocaleTimeString();
+        }
+
+        function fetchWeather() {
+            const apiKey = "85158e35e52890edf18936f969fded80";
+            const city = "Katunayaka";
+            const units = "metric";
+            const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=${units}&appid=${apiKey}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.cod === 200) {
+                        document.getElementById("cityName").innerText = `${data.name}, ${data.sys.country}`;
+                        document.getElementById("weatherTemp").innerText = `${Math.round(data.main.temp)}°C`;
+                        document.getElementById("weatherDesc").innerText = data.weather[0].description;
+                        document.getElementById("weatherIcon").src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
+                    } else {
+                        document.getElementById("cityName").innerText = "City Unavailable";
+                        document.getElementById("weatherTemp").innerText = "N/A";
+                        document.getElementById("weatherDesc").innerText = "Weather unavailable";
+                    }
+                })
+                .catch(error => {
+                    console.error("Weather error:", error);
+                    document.getElementById("cityName").innerText = "City Unavailable";
+                    document.getElementById("weatherTemp").innerText = "N/A";
+                    document.getElementById("weatherDesc").innerText = "Weather unavailable";
+                });
+        }
+
         document.addEventListener("DOMContentLoaded", () => {
-            rotateSlides(); // Initial load
-            setInterval(rotateSlides, 10000); // Change every 10 seconds
+            updateTime();
+            setInterval(updateTime, 1000);
+            fetchWeather();
+            setInterval(fetchWeather, 600000); // every 10 min
+            rotateSlides();
+            setInterval(rotateSlides, 10000); // every 10 sec
         });
     </script>
 </body>
