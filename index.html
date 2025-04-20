@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Performance Dashboard</title>
-    <meta http-equiv="refresh" content="1800"> <!-- Refresh every 30 minutes -->
+    <meta http-equiv="refresh" content="1800">
     <style>
         html, body {
             margin: 0;
@@ -108,7 +108,7 @@
         <!-- Scrolling Ticker -->
         <div class="ticker-container">
             <div class="ticker-text">
-                Important Notice: System maintenance at 10 PM. Please save your work. 🚀
+                ⚠️ Attention: Please ensure machines are inspected by 8 AM daily | 🛠 Maintenance window tonight at 10 PM | 🎯 Target yield this week: 92% | 🚨 Safety reminder: PPE is mandatory in all sections
             </div>
         </div>
     </div>
@@ -120,9 +120,19 @@
 
     <script>
         const pageIDs = [
+            "page/p_jhaldr8ird",
+            "page/BGGGF",
+            "page/p_y5rjvcqdrd",
+            "page/p_le1e2jakrd",
+            "page/p_isyaxnjnrd",
+            "page/p_xrzzgkuprd",
+            "page/p_17lkqgqqrd",
+            "page/p_s578cjqqrd",
+            "page/p_vyx726tprd",
             "page/p_5pf5vd8krd",
-            "page/p_r8keu3w7oc",
-            "page/p_d2a1mrlv6e"
+            "page/p_2ioud4vprd",
+            "page/p_fwcxl2jmrd",
+            "page/p_ohe31rrprd"
         ];
         const baseURL = "https://lookerstudio.google.com/embed/reporting/a567d9d3-a904-43f4-a783-2a6f2fcc4933";
         let currentPage = 0;
@@ -174,9 +184,9 @@
             updateTime();
             setInterval(updateTime, 1000);
             fetchWeather();
-            setInterval(fetchWeather, 600000); // every 10 min
+            setInterval(fetchWeather, 600000); // every 10 minutes
             rotateSlides();
-            setInterval(rotateSlides, 10000); // every 10 sec
+            setInterval(rotateSlides, 10000); // every 10 seconds
         });
     </script>
 </body>
