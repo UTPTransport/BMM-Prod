@@ -9,113 +9,99 @@
             padding: 0;
             overflow: hidden;
             background: #F5F7FB;
-            display: flex;
             width: 100vw;
             height: 100vh;
-        }
-
-        .left-panel {
-            width: 100px;
-            height: 100vh;
-            background: #F5F7FB;
-            color: #000000;
             font-family: Arial, sans-serif;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-
-        .date-box {
-            font-size: 10px;
-            font-weight: bold;
-            text-align: center;
-        }
-
-        .time-box {
-            font-size: 14px;
-            font-weight: bold;
-            text-align: center;
-        }
-
-        .weather-box {
-            text-align: center;
-            font-size: 12px;
-        }
-
-        .weather-icon {
-            width: 80px;
-            height: 80px;
-        }
-
-        .city-name {
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .ticker-container {
-            overflow: hidden;
-            height: 350px;
-            width: 100%;
-            position: relative;
-        }
-
-        .ticker-text {
-            position: absolute;
-            width: 100%;
-            animation: scrollUp 10s linear infinite;
-        }
-
-        @keyframes scrollUp {
-            from { transform: translateY(100%); }
-            to { transform: translateY(-100%); }
         }
 
         .iframe-container {
-            flex-grow: 1;
-            height: 100vh;
-            position: relative;
+            flex: 1;
+            width: 100%;
             background: #F5F7FB;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         iframe {
             width: 100%;
             height: 100%;
             border: none;
-            background: transparent;
+        }
+
+        .bottom-panel {
+            width: 100%;
+            height: 120px;
+            background: #F5F7FB;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 2px solid #ccc;
+            box-sizing: border-box;
+            padding: 10px 20px;
+        }
+
+        .date-time, .weather-box {
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .weather-box img {
+            width: 50px;
+            height: 50px;
+        }
+
+        .ticker-container {
+            flex-grow: 1;
+            margin: 0 40px;
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+        }
+
+        .ticker-text {
+            position: absolute;
+            white-space: nowrap;
+            animation: scrollLeft 20s linear infinite;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        @keyframes scrollLeft {
+            0%   { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
         }
     </style>
 </head>
 <body>
-    <!-- Left Panel -->
-    <div class="left-panel">
-        <div id="dateBox" class="date-box"></div>
-        <div id="timeBox" class="time-box"></div>
 
-        <!-- Weather -->
-        <div class="weather-box">
-            <div id="cityName" class="city-name">Loading...</div>
-            <img id="weatherIcon" class="weather-icon" src="" alt="Weather Icon">
-            <div id="weatherTemp">--°C</div>
-            <div id="weatherDesc">Loading...</div>
+    <!-- Looker Studio Iframe Area -->
+    <div class="iframe-container">
+        <iframe id="lookerFrame" src="" allowfullscreen></iframe>
+    </div>
+
+    <!-- Bottom Panel -->
+    <div class="bottom-panel">
+        <!-- Date & Time -->
+        <div class="date-time">
+            <div id="dateBox">Loading date...</div>
+            <div id="timeBox">Loading time...</div>
         </div>
 
-        <!-- Scrolling Ticker -->
+        <!-- Ticker -->
         <div class="ticker-container">
             <div class="ticker-text">
                 ⚠️ Attention: Please ensure machines are inspected by 8 AM daily | 🛠 Maintenance window tonight at 10 PM | 🎯 Target yield this week: 92% | 🚨 Safety reminder: PPE is mandatory in all sections
             </div>
         </div>
-    </div>
 
-    <!-- Right Panel with Iframe -->
-    <div class="iframe-container">
-        <iframe id="lookerFrame" src="" allowfullscreen></iframe>
+        <!-- Weather -->
+        <div class="weather-box">
+            <div id="cityName">Loading...</div>
+            <img id="weatherIcon" src="" alt="Weather Icon">
+            <div id="weatherTemp">--°C</div>
+            <div id="weatherDesc">Loading...</div>
+        </div>
     </div>
 
     <script>
@@ -148,8 +134,8 @@
         function updateTime() {
             const now = new Date();
             const options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
-            document.getElementById("dateBox").innerHTML = now.toLocaleDateString('en-US', options);
-            document.getElementById("timeBox").innerHTML = now.toLocaleTimeString();
+            document.getElementById("dateBox").innerText = now.toLocaleDateString('en-US', options);
+            document.getElementById("timeBox").innerText = now.toLocaleTimeString('en-US');
         }
 
         function fetchWeather() {
@@ -184,7 +170,7 @@
             updateTime();
             setInterval(updateTime, 1000);
             fetchWeather();
-            setInterval(fetchWeather, 600000); // every 10 minutes
+            setInterval(fetchWeather, 600000); // every 10 mins
             rotateSlides();
             setInterval(rotateSlides, 10000); // every 10 seconds
         });
