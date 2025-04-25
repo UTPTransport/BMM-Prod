@@ -9,113 +9,143 @@
             padding: 0;
             overflow: hidden;
             background: #F5F7FB;
-            display: flex;
             width: 100vw;
             height: 100vh;
-        }
-
-        .left-panel {
-            width: 100px;
-            height: 100vh;
-            background: #F5F7FB;
-            color: #000000;
             font-family: Arial, sans-serif;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-
-        .date-box {
-            font-size: 10px;
-            font-weight: bold;
-            text-align: center;
-        }
-
-        .time-box {
-            font-size: 14px;
-            font-weight: bold;
-            text-align: center;
-        }
-
-        .weather-box {
-            text-align: center;
-            font-size: 12px;
-        }
-
-        .weather-icon {
-            width: 80px;
-            height: 80px;
-        }
-
-        .city-name {
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .ticker-container {
-            overflow: hidden;
-            height: 350px;
-            width: 100%;
-            position: relative;
-        }
-
-        .ticker-text {
-            position: absolute;
-            width: 100%;
-            animation: scrollUp 10s linear infinite;
-        }
-
-        @keyframes scrollUp {
-            from { transform: translateY(100%); }
-            to { transform: translateY(-100%); }
         }
 
         .iframe-container {
-            flex-grow: 1;
-            height: 100vh;
-            position: relative;
+            flex: 1;
+            width: 100%;
             background: #F5F7FB;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         iframe {
             width: 100%;
             height: 100%;
             border: none;
-            background: transparent;
+        }
+
+        /* .bottom-panel {
+            width: 100%;
+            height: 65px;
+            background: #F5F7FB;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 2px solid #ccc;
+            box-sizing: border-box;
+            padding: 0 20px;
+            position: relative;
+        } */
+
+        /* Bottom Panel */
+        .bottom-panel {
+            width: 100%;
+            height: 55px; /* Or whatever slim height you're using */
+            background: #ccd9e8; /* Updated background color */
+            color: #000000;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            box-sizing: border-box;
+        }
+
+        .date-time {
+            font-size: 12px;
+            font-weight: bold;
+            text-align: left;
+        }
+
+        .ticker-container {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            overflow: hidden;
+            white-space: nowrap;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        .ticker-text {
+            display: inline-block;
+            white-space: nowrap;
+            animation: scrollLeft 35s linear infinite;
+            font-size: 20px;
+            /* font-weight: bold; */
+            /* color: #222; */
+            font-weight: 900; /* Bolder font */
+            color: #003366; /* Deep blue color */
+        }
+
+        @keyframes scrollLeft {
+            0%   { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        .weather-box {
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .weather-icon {
+            margin-right: 10px;
+        }
+
+        .weather-icon img {
+            width: 35px;
+            height: 35px;
+        }
+
+        .weather-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
         }
     </style>
 </head>
 <body>
-    <!-- Left Panel -->
-    <div class="left-panel">
-        <div id="dateBox" class="date-box"></div>
-        <div id="timeBox" class="time-box"></div>
 
-        <!-- Weather -->
-        <div class="weather-box">
-            <div id="cityName" class="city-name">Loading...</div>
-            <img id="weatherIcon" class="weather-icon" src="" alt="Weather Icon">
-            <div id="weatherTemp">--°C</div>
-            <div id="weatherDesc">Loading...</div>
+    <!-- Looker Studio Iframe Area -->
+    <div class="iframe-container">
+        <iframe id="lookerFrame" src="" allowfullscreen></iframe>
+    </div>
+
+    <!-- Bottom Panel -->
+    <div class="bottom-panel">
+        <!-- Date & Time -->
+        <div class="date-time">
+            <div id="dateBox">Loading date...</div>
+            <div id="timeBox">Loading time...</div>
         </div>
 
-        <!-- Scrolling Ticker -->
+        <!-- Ticker -->
         <div class="ticker-container">
             <div class="ticker-text">
                 ⚠️ Attention: Please ensure machines are inspected by 8 AM daily | 🛠 Maintenance window tonight at 10 PM | 🎯 Target yield this week: 92% | 🚨 Safety reminder: PPE is mandatory in all sections
             </div>
         </div>
-    </div>
 
-    <!-- Right Panel with Iframe -->
-    <div class="iframe-container">
-        <iframe id="lookerFrame" src="" allowfullscreen></iframe>
+        <!-- Weather -->
+        <div class="weather-box">
+            <div class="weather-icon">
+                <img id="weatherIcon" src="" alt="Weather Icon">
+            </div>
+            <div class="weather-text">
+                <div id="cityName">Loading...</div>
+                <div id="weatherTemp">--°C</div>
+                <div id="weatherDesc">Loading...</div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -129,27 +159,27 @@
             "page/p_17lkqgqqrd",
             "page/p_s578cjqqrd",
             "page/p_vyx726tprd",
-            "page/p_5pf5vd8krd",
-            "page/p_2ioud4vprd",
+            // "page/p_5pf5vd8krd",
+            // "page/p_2ioud4vprd",
             "page/p_fwcxl2jmrd",
             "page/p_ohe31rrprd"
         ];
         const baseURL = "https://lookerstudio.google.com/embed/reporting/a567d9d3-a904-43f4-a783-2a6f2fcc4933";
+        // const baseURL = "https://lookerstudio.google.com/embed/reporting/a567d9d3-a904-43f4-a783-2a6f2fcc4933/page/p_ohe31rrprd"
         let currentPage = 0;
 
         function rotateSlides() {
             const iframe = document.getElementById("lookerFrame");
             const fullURL = `${baseURL}/${pageIDs[currentPage]}?t=${Date.now()}`;
             iframe.src = fullURL;
-
             currentPage = (currentPage + 1) % pageIDs.length;
         }
 
         function updateTime() {
             const now = new Date();
             const options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
-            document.getElementById("dateBox").innerHTML = now.toLocaleDateString('en-US', options);
-            document.getElementById("timeBox").innerHTML = now.toLocaleTimeString();
+            document.getElementById("dateBox").innerText = now.toLocaleDateString('en-US', options);
+            document.getElementById("timeBox").innerText = now.toLocaleTimeString('en-US');
         }
 
         function fetchWeather() {
@@ -184,9 +214,10 @@
             updateTime();
             setInterval(updateTime, 1000);
             fetchWeather();
-            setInterval(fetchWeather, 600000); // every 10 minutes
+            setInterval(fetchWeather, 600000); // every 10 mins
             rotateSlides();
-            setInterval(rotateSlides, 10000); // every 10 seconds
+            // setInterval(rotateSlides, 10000); // every 10 seconds
+            setInterval(rotateSlides, 15000); // every 10 seconds
         });
     </script>
 </body>
